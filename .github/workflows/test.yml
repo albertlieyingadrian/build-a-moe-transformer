@@ -1,0 +1,63 @@
+name: test
+on:
+  push:
+  pull_request:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check . && ruff format --check .
+
+  # every reference solution against its own stage (what `make test-solutions` does first), one job per stage
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install CPU-only PyTorch and the rest
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.5.1
+          pip install -r requirements.txt
+      - name: Solution ${{ matrix.stage }} passes stage ${{ matrix.stage }}
+        run: |
+          d=$(ls -d solutions/python/${{ matrix.stage }}-*/code)
+          PROGRAM_DIR=$d PYTHON=python python -m pytest -q --durations=5 tests/test_stage_${{ matrix.stage }}.py
+
+  # the last solution against every stage (the second half of `make test-solutions`)
+  last:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install CPU-only PyTorch and the rest
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.5.1
+          pip install -r requirements.txt
+      - name: Last solution
+        run: PYTHON=python python -m pytest -q --durations=10 tests
+
+  # the staged solutions must be exactly what scripts/make_solutions.py writes from the last one
+  solutions-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: python scripts/make_solutions.py && git diff --exit-code solutions

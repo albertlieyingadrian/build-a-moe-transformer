@@ -1,0 +1,137 @@
+slug: "moe-transformer"
+name: "Build a Mixture-of-Experts Transformer"
+short_name: "MoE Transformer"
+release_status: "alpha"
+
+description_md: |-
+  A dense transformer runs every token through the same feed-forward network. A Mixture-of-Experts (MoE)
+  transformer keeps many smaller feed-forward networks, the experts, and a router that sends each token to only a
+  few of them. The model can store far more weights while each token still pays for only a few experts. DeepSeek-V3
+  stores 671B parameters and uses 37B per token this way.
+
+  You'll build a tiny DeepSeek-style MoE from scratch: a dense baseline, SwiGLU experts, a top-k router, token
+  dispatch and capacity, the classic load-balancing loss and DeepSeek's auxiliary-loss-free bias, a shared expert,
+  fine-grained experts and Multi-head Latent Attention. Then you'll train it against a dense model with the same
+  active parameters and open it up: which characters go to which expert, what breaks when you switch one off, and
+  how to catch a router that has collapsed onto a few experts.
+
+  Everything runs on a laptop CPU in minutes, in plain PyTorch.
+
+short_description_md: |-
+  Learn about routing, load balancing, sparse compute, and how to look inside a model that picks its experts
+
+completion_percentage: 15
+
+languages:
+  - slug: "python"
+
+marketing:
+  difficulty: medium
+  sample_extension_idea_title: "Multi-token prediction"
+  sample_extension_idea_description: "A second head that also predicts the token after next, as DeepSeek-V3 does."
+  frequently_asked_questions:
+    - question_markdown: "What exactly will I build?"
+      answer_markdown: |-
+        A command-line program with one command per stage. By the end it trains a character-level MoE transformer
+        with a shared expert, eight routed experts and latent attention; compares it with dense models at the same
+        active and the same total parameters; and runs routing, ablation and collapse diagnostics on it.
+    - question_markdown: "What do I need to know first?"
+      answer_markdown: |-
+        Python and a little linear algebra (vectors, matrix multiplication). No machine learning background is
+        assumed: every stage explains the idea with an analogy and a worked example before the code.
+
+extensions:
+  - slug: "mtp"
+    name: "Multi-token prediction"
+    description_markdown: |-
+      Add DeepSeek-V3's multi-token-prediction module: a second head that predicts the token after next, trained
+      alongside the main model and dropped (or used as a draft) at inference.
+
+stages:
+  - slug: "tokenize"
+    name: "Characters to numbers"
+    difficulty: very_easy
+    marketing_md: |-
+      In this stage, you'll turn text into token ids, split it into training and validation text, and cut batches.
+  - slug: "forward"
+    name: "A dense GPT"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll build the dense baseline: RMSNorm, causal attention and a feed-forward network.
+  - slug: "train-dense"
+    name: "Train the dense baseline"
+    difficulty: easy
+    marketing_md: |-
+      In this stage, you'll train the dense GPT on text and sample from it.
+  - slug: "expert"
+    name: "The SwiGLU expert"
+    difficulty: easy
+    marketing_md: |-
+      In this stage, you'll build one expert: a gated feed-forward network with three matrices.
+  - slug: "router"
+    name: "The router: softmax and top-k"
+    difficulty: easy
+    marketing_md: |-
+      In this stage, you'll score every expert for every token and keep the best k.
+  - slug: "dispatch"
+    name: "Dispatch and combine"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll send each token to its experts in batches and add the answers back, weighted.
+  - slug: "capacity"
+    name: "Capacity and dropped tokens"
+    difficulty: easy
+    marketing_md: |-
+      In this stage, you'll give every expert a queue limit and count the tokens that get turned away.
+  - slug: "aux-loss"
+    name: "The load-balancing loss"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll add the Switch-style auxiliary loss that pushes the router to spread its tokens.
+  - slug: "bias-balance"
+    name: "Auxiliary-loss-free balancing"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll balance the load the DeepSeek-V3 way: a bias that steers the choice and nothing else.
+  - slug: "shared-expert"
+    name: "The shared expert"
+    difficulty: easy
+    marketing_md: |-
+      In this stage, you'll add an expert that every token uses, so the routed experts can specialise.
+  - slug: "fine-grained"
+    name: "Fine-grained experts"
+    difficulty: easy
+    marketing_md: |-
+      In this stage, you'll cut each expert into smaller ones and count how many more combinations that allows.
+  - slug: "mla"
+    name: "Multi-head Latent Attention"
+    difficulty: hard
+    marketing_md: |-
+      In this stage, you'll replace attention with DeepSeek's latent attention and decoupled RoPE, and shrink the
+      cache.
+  - slug: "compare"
+    name: "MoE vs dense"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll train the MoE against dense models with the same active and the same total parameters.
+  - slug: "route-lab"
+    name: "Who goes where"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll measure which characters each expert gets and whether that is more than chance.
+  - slug: "ablate"
+    name: "Switching experts off"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll switch experts off one at a time and see whose predictions get worse.
+  - slug: "collapse"
+    name: "Routing collapse"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll build a collapse detector and watch both balancing methods rescue a lopsided router.
+  - slug: "mtp"
+    primary_extension_slug: "mtp"
+    name: "Multi-token prediction"
+    difficulty: medium
+    marketing_md: |-
+      In this stage, you'll add a module that predicts the token after next and measure it as a draft model.
