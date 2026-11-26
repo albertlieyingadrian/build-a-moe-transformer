@@ -1,0 +1,171 @@
+trained dense: val 1.525 in 800 s
+wrote runs/seed1/dense_s1.pt
+trained dense-wide: val 1.493 in 1278 s
+wrote runs/seed1/dense-wide_s1.pt
+trained moe-none: val 1.529 in 890 s
+wrote runs/seed1/moe-none_s1.pt
+trained moe-aux: val 1.536 in 886 s
+wrote runs/seed1/moe-aux_s1.pt
+trained moe-bias: val 1.518 in 879 s
+wrote runs/seed1/moe-bias_s1.pt
+trained moe-bias-fine: val 1.528 in 1535 s
+wrote runs/seed1/moe-bias-fine_s1.pt
+
+variant          total params  active params  val loss  max load
+dense                  828928         828928     1.525         -
+dense-wide            2008576        2008576     1.493         -
+moe-none              2012672         833024     1.529      2.29
+moe-aux               2012672         833024     1.536      1.06
+moe-bias              2012672         833024     1.518      1.23
+moe-bias-fine         2024960         845312     1.528      2.33
+wrote runs/seed1/compare_s1.json
+wrote runs/seed1/compare_s1.png
+layer 0: load shares [0.12, 0.16, 0.16, 0.11, 0.12, 0.14, 0.08, 0.11]  max load 1.29
+  token -> expert: 0.939 of the expert's entropy (shuffled control 0.001, untrained model 0.792)
+  expert 0: most over-represented "xtdf'jpn"     biggest class share: consonant
+  expert 1: most over-represented '-zWgJchF'     biggest class share: consonant
+  expert 2: most over-represented 'HmvAhFic'     biggest class share: upper
+  expert 3: most over-represented 'YeBMNSPi'     biggest class share: vowel
+  expert 4: most over-represented 'UaEq;?Z,'     biggest class share: punct
+  expert 5: most over-represented 'L sWXYZa'     biggest class share: space
+  expert 6: most over-represented 'lbihgfed'     biggest class share: space
+  expert 7: most over-represented 'K!bkw.IO'     biggest class share: newline
+layer 1: load shares [0.13, 0.14, 0.12, 0.12, 0.12, 0.13, 0.14, 0.09]  max load 1.14
+  token -> expert: 0.427 of the expert's entropy (shuffled control 0.001, untrained model 0.664)
+  expert 0: most over-represented 'YWFjqbGB'     biggest class share: newline
+  expert 1: most over-represented 'Z?.!J;:,'     biggest class share: newline
+  expert 2: most over-represented "ouRf'eUn"     biggest class share: vowel
+  expert 3: most over-represented " RPn'pLv"     biggest class share: space
+  expert 4: most over-represented "-aui' Ar"     biggest class share: space
+  expert 5: most over-represented 'xesalrip'     biggest class share: vowel
+  expert 6: most over-represented 'vdklwyrc'     biggest class share: consonant
+  expert 7: most over-represented 'Cgnsrlkc'     biggest class share: upper
+layer 2: load shares [0.15, 0.12, 0.12, 0.11, 0.13, 0.14, 0.11, 0.12]  max load 1.18
+  token -> expert: 0.538 of the expert's entropy (shuffled control 0.001, untrained model 0.564)
+  expert 0: most over-represented 'PGFYLfRD'     biggest class share: newline
+  expert 1: most over-represented '!.?:;,I-'     biggest class share: punct
+  expert 2: most over-represented ' csSlhnC'     biggest class share: space
+  expert 3: most over-represented 'evkKxEui'     biggest class share: vowel
+  expert 4: most over-represented 'W⏎TwtOVH'     biggest class share: newline
+  expert 5: most over-represented "jqobB'ai"     biggest class share: vowel
+  expert 6: most over-represented 'ZCUuEgte'     biggest class share: vowel
+  expert 7: most over-represented 'zmhHlMdk'     biggest class share: consonant
+layer 3: load shares [0.14, 0.08, 0.16, 0.13, 0.12, 0.09, 0.16, 0.12]  max load 1.31
+  token -> expert: 0.590 of the expert's entropy (shuffled control 0.001, untrained model 0.427)
+  expert 0: most over-represented ' isncola'     biggest class share: space
+  expert 1: most over-represented 'aEAORyeN'     biggest class share: vowel
+  expert 2: most over-represented "eZurx'in"     biggest class share: vowel
+  expert 3: most over-represented 'oj-qbhmp'     biggest class share: consonant
+  expert 4: most over-represented 'GFYRILDN'     biggest class share: upper
+  expert 5: most over-represented "U'⏎iVOCH"     biggest class share: newline
+  expert 6: most over-represented 'Wwcvktgp'     biggest class share: consonant
+  expert 7: most over-represented '.!;?,:xz'     biggest class share: punct
+wrote runs/seed1/route_lab.json
+wrote runs/seed1/routing_heatmap.png
+val loss, nothing ablated: 1.522
+layer  expert  share of tokens  loss change  on its own tokens  on the rest
+    0       0             0.24       +0.399             +1.352       +0.102
+    0       1             0.32       +0.049             +0.122       +0.015
+    0       2             0.31       +0.241             +0.595       +0.081
+    0       3             0.22       +0.481             +1.567       +0.170
+    0       4             0.24       +0.765             +2.527       +0.220
+    0       5             0.27       +0.825             +2.152       +0.324
+    0       6             0.17       +0.101             +0.352       +0.050
+    0       7             0.23       +0.303             +0.951       +0.113
+    0  shared             1.00       +0.515             +0.515       +0.000
+    1       0             0.25       +0.033             +0.083       +0.017
+    1       1             0.28       +0.022             +0.059       +0.008
+    1       2             0.25       +0.035             +0.126       +0.006
+    1       3             0.25       +0.030             +0.092       +0.009
+    1       4             0.24       +0.019             +0.075       +0.001
+    1       5             0.27       +0.044             +0.138       +0.009
+    1       6             0.27       +0.052             +0.149       +0.015
+    1       7             0.18       +0.060             +0.276       +0.012
+    1  shared             1.00       +0.056             +0.056       +0.000
+    2       0             0.29       +0.010             +0.030       +0.002
+    2       1             0.23       +0.018             +0.055       +0.007
+    2       2             0.24       +0.014             +0.047       +0.003
+    2       3             0.21       +0.023             +0.094       +0.003
+    2       4             0.27       +0.020             +0.055       +0.007
+    2       5             0.29       +0.022             +0.072       +0.002
+    2       6             0.23       +0.027             +0.094       +0.007
+    2       7             0.24       +0.027             +0.098       +0.005
+    2  shared             1.00       +0.033             +0.033       +0.000
+    3       0             0.28       +0.093             +0.331       +0.000
+    3       1             0.16       +0.044             +0.276       +0.000
+    3       2             0.33       +0.045             +0.139       +0.000
+    3       3             0.26       +0.048             +0.186       +0.000
+    3       4             0.24       +0.025             +0.107       +0.000
+    3       5             0.18       +0.035             +0.200       +0.000
+    3       6             0.32       +0.024             +0.074       +0.000
+    3       7             0.24       +0.019             +0.079       +0.000
+    3  shared             1.00       +0.047             +0.047       +0.000
+mean loss change, one routed expert off: +0.124
+mean loss change, the shared expert off: +0.163
+ablations that hurt an expert's own tokens more than the rest: 32 of 32
+wrote runs/seed1/ablate.json
+layer 0: load shares [0.18, 0.08, 0.11, 0.05, 0.09, 0.18, 0.2, 0.11]  max load 1.64
+  token -> expert: 0.965 of the expert's entropy (shuffled control 0.001, untrained model 0.792)
+  expert 0: most over-represented "KtsnVyx'"     biggest class share: consonant
+  expert 1: most over-represented 'cRSWGYhL'     biggest class share: upper
+  expert 2: most over-represented 'i!Hv-EAm'     biggest class share: vowel
+  expert 3: most over-represented 'eNbjihgf'     biggest class share: vowel
+  expert 4: most over-represented 'UMq:oaYZ'     biggest class share: vowel
+  expert 5: most over-represented 'zPahWXYT'     biggest class share: space
+  expert 6: most over-represented ' r,;?flJ'     biggest class share: space
+  expert 7: most over-represented 'O⏎wkIbuh'     biggest class share: newline
+layer 1: load shares [0.0, 0.0, 0.08, 0.37, 0.26, 0.16, 0.05, 0.07]  max load 2.99
+  token -> expert: 0.417 of the expert's entropy (shuffled control 0.001, untrained model 0.664)
+  expert 0: most over-represented ''             biggest class share: space
+  expert 1: most over-represented ''             biggest class share: consonant
+  expert 2: most over-represented 'UEORSfoN'     biggest class share: newline
+  expert 3: most over-represented ',;:jy bh'     biggest class share: space
+  expert 4: most over-represented 'JZGBTKP-'     biggest class share: newline
+  expert 5: most over-represented "'eaultpc"     biggest class share: vowel
+  expert 6: most over-represented 'q.?z!gk⏎'     biggest class share: punct
+  expert 7: most over-represented 'iCHIzUvR'     biggest class share: vowel
+layer 2: load shares [0.19, 0.0, 0.2, 0.04, 0.19, 0.11, 0.04, 0.22]  max load 1.76
+  token -> expert: 0.557 of the expert's entropy (shuffled control 0.001, untrained model 0.564)
+  expert 0: most over-represented 'YWTwtycN'     biggest class share: space
+  expert 1: most over-represented ''             biggest class share: consonant
+  expert 2: most over-represented " ix'KuS-"     biggest class share: space
+  expert 3: most over-represented 'akubihgf'     biggest class share: vowel
+  expert 4: most over-represented '.I⏎:-Rvu'     biggest class share: newline
+  expert 5: most over-represented 'JGFBqjbZ'     biggest class share: upper
+  expert 6: most over-represented 'gcuystei'     biggest class share: consonant
+  expert 7: most over-represented ';H,Vhd?M'     biggest class share: punct
+layer 3: load shares [0.0, 0.04, 0.35, 0.04, 0.07, 0.24, 0.02, 0.23]  max load 2.82
+  token -> expert: 0.371 of the expert's entropy (shuffled control 0.002, untrained model 0.427)
+  expert 0: most over-represented 'bjihgfed'     biggest class share: consonant
+  expert 1: most over-represented 'cugnsmtr'     biggest class share: upper
+  expert 2: most over-represented 'u axoeni'     biggest class share: space
+  expert 3: most over-represented 'ioOauerh'     biggest class share: space
+  expert 4: most over-represented 'ZUECPLH:'     biggest class share: upper
+  expert 5: most over-represented "YWJFj⏎b'"     biggest class share: newline
+  expert 6: most over-represented 'RDNOASEI'     biggest class share: upper
+  expert 7: most over-represented '!.q?,;vz'     biggest class share: punct
+wrote runs/seed1/none/route_lab.json
+wrote runs/seed1/none/routing_heatmap.png
+detector on an even layer: ok
+detector on a collapsed layer: ['entropy 0.12 < 0.75', 'max load 3.88 > 2.0', '3 dead expert(s)']
+none       val 1.549  worst layer: max load 3.21, entropy 0.72, dead 1  flags: ['1 dead expert(s)', 'entropy 0.72 < 0.75', 'max load 2.19 > 2.0', 'max load 2.72 > 2.0', 'max load 3.21 > 2.0']
+none-skew  val 1.573  worst layer: max load 4.00, entropy 0.71, dead 1  flags: ['1 dead expert(s)', '2 dead expert(s)', '3 dead expert(s)', 'entropy 0.67 < 0.75', 'entropy 0.71 < 0.75', 'entropy 0.74 < 0.75', 'entropy 0.75 < 0.75', 'max load 3.68 > 2.0', 'max load 3.82 > 2.0', 'max load 3.98 > 2.0', 'max load 4.00 > 2.0']
+aux-skew   val 1.527  worst layer: max load 1.17, entropy 1.00, dead 0  flags: none
+bias-skew  val 1.571  worst layer: max load 1.62, entropy 0.97, dead 0  flags: none
+none       max load per eval (worst layer): 2.8 3.7 3.5 3.4 3.3 3.4 3.3 3.3 3.3 3.2 3.2
+none-skew  max load per eval (worst layer): 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0 4.0
+aux-skew   max load per eval (worst layer): 4.0 1.4 1.6 1.2 1.2 1.3 1.2 1.2 1.2 1.2 1.2
+bias-skew  max load per eval (worst layer): 4.0 1.7 1.8 2.2 1.5 1.6 1.7 1.6 1.6 1.7 1.6
+wrote runs/seed1/collapse_s1.json
+wrote runs/seed1/collapse_s1.png
+mtp=0: main val loss 1.518, active parameters 833024
+mtp=1: main val loss 1.514, active parameters 833024
+MTP module parameters (training only): 236064
+MTP val loss on token t+2: 1.490 (guessing: 4.174)
+MTP top-1 accuracy on token t+2: 0.560
+MTP agrees with the main model's next-step guess: 0.791 (a draft acceptance rate)
+active parameters unchanged by MTP: True
+main val loss change with MTP: -0.005
+wrote runs/seed1/mtp_s1.json
+
+--- stderr

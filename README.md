@@ -42,11 +42,54 @@ By stage 17 the program trains a 4-layer, width-128 character model with Multi-h
 every layer (8 routed experts, top-2, 1 shared, 2.0M weights, 0.83M active per token), compares it with two dense
 models, and draws where its tokens go:
 
-RESULTS_FIGURES
+![Validation loss of six models after 3,000 steps, three seeds](assets/compare.png)
+
+![Share of each character class's routing slots per expert, four layers](assets/routing_heatmap.png)
+
+![Max load of the worst layer over training, with expert 0 given a head start](assets/collapse.png)
 
 ## What you'll find
 
-RESULTS_TEXT
+Three seeds, every number from `./run_all.sh` on 8-vCPU cloud CPU containers (4 threads each; 11-26 minutes per
+model) and printed by `python scripts/summarize.py`. Tiny Shakespeare, 3,000 steps of 32 windows of 128 characters,
+4 layers of width 128 with latent attention.
+
+| model | total params | active params | val loss, seeds 0 / 1 / 2 | mean ± sd | max load |
+|---|---|---|---|---|---|
+| dense, same active parameters | 828,928 | 828,928 | 1.512 / 1.525 / 1.550 | 1.529 ± 0.019 | - |
+| dense-wide, same total parameters | 2,008,576 | 2,008,576 | 1.531 / 1.493 / 1.570 | 1.531 ± 0.038 | - |
+| MoE, no balancing | 2,012,672 | 833,024 | 1.513 / 1.529 / 1.531 | 1.524 ± 0.010 | 2.55 / 2.29 / 2.90 |
+| MoE, auxiliary loss | 2,012,672 | 833,024 | 1.516 / 1.536 / 1.539 | 1.530 ± 0.013 | 1.10 / 1.06 / 1.15 |
+| MoE, auxiliary-loss-free bias | 2,012,672 | 833,024 | 1.524 / 1.518 / 1.539 | 1.527 ± 0.011 | 1.21 / 1.23 / 1.32 |
+| MoE, fine-grained (32 experts, top-8), bias | 2,024,960 | 845,312 | 1.509 / 1.528 / 1.520 | 1.519 ± 0.009 | 2.65 / 2.33 / 2.36 |
+
+"Max load" is the busiest expert's share of the routing slots times the number of experts, averaged over layers:
+1.0 is perfectly even, 4.0 the worst top-2 allows.
+
+- **The MoE learns faster, then the data runs out.** Paired with the dense model of the same active parameters (same
+  seed, same validation text), every MoE variant is ahead in every seed from step 300 to step 1,800, by 0.03-0.05 nats
+  per character on average (worst seed still ahead by 0.003-0.040). By step 3,000 the gap has closed to a tie (-0.010
+  to +0.001 on average, inside the 0.01-0.04 seed-to-seed spread). Tiny Shakespeare is 1 MB, and by step 3,000 every
+  model has read it about a dozen times, so extra stored weights have little left to store; the dense model with the
+  MoE's total weights (and three times the work per token) ends tied too. The one-file version at 8-19M parameters
+  on an H100 finds the same tie at its best validation loss.
+- **Both balancing methods work, at no cost in loss.** With no balancing the busiest expert carries 2.3-2.9 times its
+  fair share; the auxiliary loss brings that to 1.06-1.15 and the bias to 1.21-1.32. Fine-grained experts with the
+  same bias rate stay uneven (2.3-2.7): 32 experts would need a faster rate or more steps.
+- **A router collapses on its own.** Without balancing, the worst layer ends with one or two dead experts (under a
+  tenth of their fair share) in every seed, and the stage-16 detector flags it from the first evaluation.
+- **Experts divide the work.** Switching off one routed expert hurt the tokens it served more than the rest in 32 of
+  32 ablations in every seed (+0.33 to +0.39 nats against +0.03 to +0.04). Switching off the shared expert costs more
+  than a routed one (+0.16 to +0.21 against +0.11 to +0.12), and layer 0's experts matter most.
+- **Routing follows the character, and most of that is there before training.** In layer 0 the character carries
+  0.86-0.96 of the information about its expert (shuffled control 0.001), but an untrained model already scores
+  0.76-0.83: a router reading the token embedding is a lookup on the token from the start. In later layers training
+  adds little or nothing (0.43-0.60 against 0.37-0.66). Spaces and punctuation get experts of their own.
+- **Recovery from a lopsided start.** Give expert 0 a fixed head start: with no balancing it keeps it (max load 4.00
+  in all seeds); the auxiliary loss pulls it back to 1.16-1.20 within 150 steps, the bias to 1.24-1.62.
+- **Multi-token prediction** (extension) agrees with the main model's own next guess 78-79% of the time, a draft
+  acceptance rate, and leaves the main loss within 0.03 (1.519 / 1.514 / 1.512 with it, 1.524 / 1.518 / 1.539
+  without).
 
 ## Limitations
 

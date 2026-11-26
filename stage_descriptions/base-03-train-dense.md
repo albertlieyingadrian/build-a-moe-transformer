@@ -22,16 +22,23 @@ width 128). That makes it the **same-active-parameters** baseline.
 
 ```bash
 $ ./your_program.sh train-dense data/tinyshakespeare.txt --steps 3000
-parameters: 821760
-step     0  val 4.174
+parameters: 886144
+step     0  val 4.187
+step   300  val 2.041
 ...
-final val loss: 1.528 (guessing: ln V = 4.174)
-training time: 210 s
+final val loss: 1.511 (guessing: ln V = 4.174)
+training time: 550 s
 sample (greedy):
-...
+
+
+COMINIUS:
+The matter of the country of the court,
+That thou hast not the court of the court,
+That thou hadst not the court of the sea,
 ```
 
-(The exact loss, time and sample of a committed run are in `runs/seed0/` after `./run_all.sh`.)
+(Measured on a cloud CPU container with 4 threads; `runs/log_seed0.txt` has the full log.) Plain attention adds a
+learned position table, which is why this model has more weights than the MLA dense model of stage 13.
 
 Greedy sampling always takes the most likely next character, which is deterministic and soon loops ("the the the").
 `generate` also takes a temperature: divide the logits by it and sample.
